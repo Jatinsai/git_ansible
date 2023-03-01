@@ -1,0 +1,21 @@
+ansible-node1 ansible_host=172.31.34.162
+ansible-node2 ansible_host=172.31.43.116
+ansible-node3 ansible_host=172.31.44.167
+ansible-node4 ansible_host=172.31.41.84
+
+[mygroup]
+ansible-node1
+ansible-node2
+ansible-node3
+ansible-node4
+
+[ubuntu]
+ansible-node3
+ansible-node4
+
+[amzn-lnx]
+ansible-node1
+ansible-node2
+
+[webserver]
+ansible-node[1:3]

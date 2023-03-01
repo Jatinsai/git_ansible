@@ -1,0 +1,56 @@
+- name: Installing multiple packages in Ubuntu and Amazon Linux
+  hosts: mygroup
+  become: yes
+    # gather_facts: false
+  tasks:
+
+  - name: To install multiple packages in amazon linux
+    yum: name={{ item }} state=present
+    loop:
+    - httpd
+    - wget
+    - curl
+    - docker
+    when: ansible_os_family == "RedHat"
+    register: result
+    notify:
+    - restart_httpd
+    - restart_docker
+
+  - name: service status check
+    shell:  systemctl status docker && systemctl status httpd
+    when: ansible_os_family == "RedHat"
+    register: running
+    tags:
+    - run
+
+  - debug:
+      var: running
+    tags:
+    - output
+
+  - name: To install apache2 and docker in Ubuntu servers
+    apt: name={{ item }} state=present
+    loop:
+    - apache2
+    - wget
+    - curl
+    when: ansible_os_family == "Debian" and ansible_distribution_version == "20.04"
+    register: result2
+    notify: restart_apache2
+
+  - debug:
+      var: result2
+
+  - debug:
+      var: result
+
+  handlers:
+  - name: restart_httpd
+    service: name=httpd  state=restarted
+
+  - name: restart_apache2
+    service: name=apache2 state=restarted
+
+  - name: restart_docker
+    service: name=docker state=restarted
